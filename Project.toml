@@ -1,0 +1,7 @@
+name = "RandomPositions"
+uuid = "3f373569-fa07-4ec2-97f5-a52c11e59be5"
+authors = ["titusfranz <titus.franz@web.de>"]
+version = "0.1.0"
+
+[deps]
+Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
