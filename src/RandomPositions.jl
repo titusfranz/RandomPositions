@@ -19,6 +19,6 @@ export mask_center, get_Nb_from_Rc
 include("gaussian_cloud.jl")
 export RydbergParams, excite_rydbergs
 include("interaction.jl")
-export get_J, PowerLaw, NearestNeighbor, get_J_dipolar, dipolar_angular_dependence
+export get_J, PowerLaw, NearestNeighbor, get_J_dipolar, dipolar_angular_dependence, DipoleInteraction
 
 end # module

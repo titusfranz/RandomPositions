@@ -35,23 +35,18 @@ function dipolar_angular_dependence(pos)
     angles + angles'
 end
 
-function get_J_dipolar(t, rydberg_params)
-    pos = excite_rydbergs(rydberg_params, t_exc=t)
-    N = size(pos, 2)
-    dist = pairwise(Euclidean(), pos)
+"Power law interaction with distance r as C/r^α	"
+@with_kw struct DipoleInteraction <: InteractionRange
+    α::Float64 = 6.0
+    C::Float64 = 1.0
+end
 
-    J = get_J(pos, PowerLaw(3, 2*2π*1150)) # C3 for mj1/2 to mj1/2 between 48S and 48P state
-
+function get_J(pos, power_law::DipoleInteraction)
+    J = get_J(pos, PowerLaw(power_law.α, power_law.C))
     return J .* dipolar_angular_dependence(pos)
 end
 
-
-function get_J_dipolar1D(p)
-    pos = getPosition1D(p)
-    N = size(pos, 2)
-    dist = pairwise(Euclidean(), pos)
-
-    J = get_J(pos, PowerLaw(3, 2*2π*1150)) # C3 for mj1/2 to mj1/2 between 48S and 48P state
-
-    return J .* dipolar_angular_dependence(pos),pos
+function get_J_dipolar(t, rydberg_params; α=3, C=2*2π*1150)  # C3 for mj1/2 to mj1/2 between 48S and 48P state
+    pos = excite_rydbergs(rydberg_params, t_exc=t)
+    return get_J(pos, DipoleInteraction(α, C))
 end
