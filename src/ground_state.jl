@@ -11,10 +11,15 @@ function get_sig_fourier(pulse_shape, t_exc)
     :rect => 0.443,
     :gauss => 0.441,
     :sech2 => 0.315,
-    :lorentz => 0.142
+    :lorentz => 0.142,
+    :unity => 1.0
     )
 
-    K[pulse_shape] / t_exc
+    get_sig_fourier(K[pulse_shape], t_exc)
+end
+
+function get_sig_fourier(pulse_shape::Number, t_exc)
+    pulse_shape / t_exc
 end
 
 
@@ -108,3 +113,41 @@ function get_ρ(Ω::AbstractVector{T}, Δ::T, Γ::T, t::T) where T
 end
 
 get_ρ(Ω::T, Δ::T, t::T) where T = Ω^2 / (Δ^2 + Ω^2) * sin(2π * Ω * t / 2)^2
+
+@with_kw struct Bloch3Level
+    Ω_p::Float64
+    Ω::Float64
+    Γ::Float64 = 6.0
+    Γ_r::Float64 = 17.4e-3
+    γ_ge::Float64 = 25e-3
+    γ_gr::Float64 = γ_ge
+    γ_er::Float64 = 0.0
+    Δ_p::Float64 = 98.0
+    Δ_c::Float64 = 0.0
+end
+
+function d_bloch_3level(dρ, ρ, p::Bloch3Level, t)
+    @unpack Ω_p, Ω, Γ, Γ_r, γ_ge, γ_gr, γ_er, Δ_p, Δ_c = p
+    Γ_ge = Γ + γ_ge + 2im * Δ_p
+    Γ_er = Γ + Γ_r + γ_er + 2im * Δ_c
+    Γ_gr = Γ_r + γ_gr + 2im * (Δ_p + Δ_c)
+
+    dρ[1] = 1im/2 * Ω_p * ρ[2] - 1im/2 * Ω_p * ρ[4] + Γ_r * ρ[5]
+    dρ[2] = 1im/2 * Ω_p * ρ[1] - 1/2 * Γ_ge * ρ[2] + 1im/2 * Ω * ρ[3] - 1im/2 * Ω_p * ρ[5]
+    dρ[3] = 1im/2 * Ω * ρ[2] - 1/2 * Γ_gr * ρ[3] - 1im/2 * Ω_p * ρ[6]
+    dρ[4] = -1im/2 * Ω_p * ρ[1] - 1/2 * conj(Γ_ge) * ρ[4] + 1im/2 * Ω_p * ρ[5] - 1im/2 * Ω * ρ[7]
+    dρ[5] = -1im/2 * Ω_p * ρ[2] + 1im/2 * Ω_p * ρ[4] - Γ * ρ[5] + 1im/2 * Ω * ρ[6] - 1im/2 * Ω * ρ[8] + Γ_r * ρ[9]
+    dρ[6] = -1im/2 * Ω_p * ρ[3] + 1im/2 * Ω * ρ[5] - 1/2 * Γ_er * ρ[6] - 1im/2 * Ω * ρ[9]
+    dρ[7] = -1im/2 * Ω * ρ[4] - 1/2 * conj(Γ_gr) * ρ[7] + 1im/2 * Ω_p * ρ[8]
+    dρ[8] = -1im/2 * Ω * ρ[5] + 1im/2 * Ω_p * ρ[7] - 1/2 * conj(Γ_er) * ρ[8] + 1im/2 * Ω * ρ[9]
+    dρ[9] = -1im/2 * Ω * ρ[6] + 1im/2 * Ω * ρ[8] - Γ_r * ρ[9]
+end
+
+function get_ρ(p::Bloch3Level, tspan::Tuple{T, T}) where T
+    ρ = zeros(9)
+    ρ[1] = 1.0
+    p = 2π*Float64[Ω, 0, Γ, Δ]
+    prob = ODEProblem(d_bloch, ρ, tspan,p)
+    sol = solve(prob, Tsit5(), save_idxs=1)
+    sol
+end

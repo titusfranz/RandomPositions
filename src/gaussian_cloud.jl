@@ -21,7 +21,7 @@ abstract type ExciteMethod end
     Δ_2γ::T = 0.0
     γ::T = 0.0
     C6::T = 9300.0
-    pulse_shape::Symbol = :rect  # 'Shape of the excitation pulse': objects=['rect', 'gauss', 'sech2', 'lorentz']
+    pulse_shape::Union{Symbol, Float64} = :rect  # 'Shape of the excitation pulse': objects=['rect', 'gauss', 'sech2', 'lorentz']
     laser_width::T = 0.14
 end
 
