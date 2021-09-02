@@ -7,6 +7,7 @@ using LinearAlgebra
 #### Sphere ###################################################################
 ###############################################################################
 
+volume_from_radius(r::Real) = 4/3 *π * r^3
 radius_from_volume(V::Real) = (3/(4π) * V)^(1/3)
 radius_from_density(n::Real, N::Int64) = (3/(4π) * N/n)^(1/3)
 radius_from_wigner(r_s::Real, N::Int64) = N^(1/3) * r_s

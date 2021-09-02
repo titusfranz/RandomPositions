@@ -59,7 +59,9 @@ function _get_ge(p::RydbergParams)
     σ_fourier = get_sig_fourier(p.pulse_shape, p.t_exc)
 
     Rc = get_Rc(ge_pos, Ω_2γ, σ_fourier, p.laser_width, p.C6)
+    println(minimum(Rc))
     Nb = get_Nb_from_Rc(ge_pos, Rc)
+    println(minimum(Nb))
 
     Ω_eff = sqrt.(Nb) .* Ω_2γ
     if p.γ == 0

@@ -23,7 +23,7 @@ function get_sig_fourier(pulse_shape::Number, t_exc)
 end
 
 
-function get_Ω(pos, Ω_c, σ_c; pos_c=[0, 0],  dims=[2, 3])
+function get_Ω(pos, Ω_c, σ_c; pos_c=[0, 0], dims=[2, 3])
     dist = sum(abs2.(pos[dims, :] .- pos_c), dims=1)
     vec(Ω_c * exp.(-dist / (2 * σ_c.^2)))
 end

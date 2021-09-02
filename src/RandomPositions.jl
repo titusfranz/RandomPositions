@@ -10,12 +10,12 @@ using OrdinaryDiffEq
 using Distances
 
 include("hard_sphere.jl")
-export pick_hard_spheres, UniformBlockade, UniformPicking, FixedNStop, PickAlways
+export pick_hard_spheres, UniformBlockade, UniformPicking, FixedNStop, PickAlways, NonuniformPicking, NonuniformBlockade, NoStop
 include("simple_geometries.jl")
 export radius_from_density, radius_from_volume, radius_from_wigner, wigner_from_volume
 export UniformBallSampler, UniformSphericalSampler, UniformBlockadedBallSampler
 include("ground_state.jl")
-export mask_center, get_Nb_from_Rc
+export mask_center, get_Nb_from_Rc, get_Ω, get_Rc, get_ρ
 include("gaussian_cloud.jl")
 export RydbergParams, excite_rydbergs
 include("interaction.jl")
