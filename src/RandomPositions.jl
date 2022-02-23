@@ -8,6 +8,7 @@ using Parameters
 using Rotations: RotZ
 using OrdinaryDiffEq
 using Distances
+using Interpolations
 
 include("hard_sphere.jl")
 export pick_hard_spheres, UniformBlockade, UniformPicking, FixedNStop, PickAlways, NonuniformPicking, NonuniformBlockade, NoStop
