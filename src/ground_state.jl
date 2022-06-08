@@ -31,17 +31,21 @@ end
 
 function get_Rc(pos, Ω_2γ, σ_fourier, laser_width, C6)
     N = size(pos)[2]
-    Nb = ones(N)
-    Rc = similar(Nb)
+    Nb_list = []
+    Nb = 1
 
     convergence = false
-    while !convergence
-        Nb_old = Nb
-        Rc .= get_Rc_from_Nb(Nb, Ω_2γ, σ_fourier, laser_width, C6)
-        Nb .= get_Nb_from_Rc(pos, Rc)
-        convergence = sum(Nb_old - Nb) <= 0
+    for i in 1:40
+        Ω_eff = sqrt.(Nb) .* Ω_2γ
+        Rc = get_Rc_from_Nb(Nb, Ω_eff, σ_fourier, laser_width, C6)
+        Nb = get_Nb_from_Rc(pos, Rc)
+        # println(sum(Nb)/N)
+        if Nb ∈ Nb_list
+            return Rc
+        end
+        push!(Nb_list, Nb)
     end
-    return Rc
+    # return Rc
 end
 
 
